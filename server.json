@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.sypherin/altronis-mcp",
-  "description": "MCP server + CLI for Altronis — Singapore AI consulting. Ask the Lyra consultant, generate a grant-matched AI transformation plan, and pull curated SG AI events, news, and business-formation data. Wraps the public altronis.sg endpoints; read-only.",
+  "description": "Ask the Altronis AI advisor: grant-matched AI plans, SG AI events, news, ecosystem data. Read-only.",
   "repository": {
     "url": "https://github.com/sypherin/altronis-mcp",
     "source": "github"
