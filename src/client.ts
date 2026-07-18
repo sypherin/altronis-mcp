@@ -8,6 +8,8 @@
  *   ALTRONIS_TIMEOUT_MS default 30000
  */
 
+import { VERSION } from "./version.js";
+
 const DEFAULT_BASE = "https://altronis.sg";
 const DEFAULT_TIMEOUT_MS = 30_000;
 
@@ -57,7 +59,7 @@ export async function request<T = unknown>(
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        "User-Agent": "altronis-mcp/0.1.0 (+https://altronis.sg)",
+        "User-Agent": `altronis-mcp/${VERSION} (+https://altronis.sg)`,
       },
       body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
       signal: controller.signal,

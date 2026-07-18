@@ -1,6 +1,7 @@
 {
   "name": "@altronis/altronis-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "mcpName": "io.github.sypherin/altronis-mcp",
   "description": "MCP server + CLI for Altronis — Singapore AI consulting. Ask the Lyra consultant, generate a grant-matched AI transformation plan, and pull curated SG AI events, news, and business-formation data. Wraps the public altronis.sg endpoints; read-only.",
   "type": "module",
   "bin": {

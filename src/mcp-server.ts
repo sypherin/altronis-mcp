@@ -12,6 +12,7 @@
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { VERSION } from "./version.js";
 import {
   CallToolRequestSchema,
   ErrorCode,
@@ -50,7 +51,7 @@ async function main(): Promise<void> {
   for (const t of tools) byName.set(t.name, t);
 
   const server = new Server(
-    { name: "altronis-mcp", version: "0.1.0" },
+    { name: "altronis-mcp", version: VERSION },
     { capabilities: { tools: {} } },
   );
 
