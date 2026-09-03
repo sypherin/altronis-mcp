@@ -52,6 +52,18 @@ const ListInput = z.object({
 
 const EmptyInput = z.object({});
 
+const TcoEstimateInput = z.object({
+  power: z.number().int().min(0).optional().describe("Power users: all-day heavy/agentic use (coding, deep research)."),
+  medium: z.number().int().min(0).optional().describe("Medium users: daily but bounded use."),
+  light: z.number().int().min(0).optional().describe("Light users: occasional questions."),
+  preset: z.string().optional().describe("Industry/company-type id from altronis_ai_cost_presets (e.g. 'law-firm', 'software-startup', 'solopreneur'). Fills the user mix when power/medium/light are omitted."),
+  horizon: z.number().int().min(1).max(120).optional().describe("Months to project over (default 36)."),
+  mode: z.enum(["api", "seat"]).optional().describe("'api' = pay-per-token API pricing (default), 'seat' = per-person monthly subscriptions."),
+  model: z.string().optional().describe("Specific cloud model to price against (e.g. 'Claude Opus 5', 'GPT-6 Astra'). Default: a mainstream capable model, with budget + frontier options shown for range."),
+  plan: z.string().optional().describe("Specific subscription plan name when mode='seat'."),
+  bizMix: z.record(z.number()).optional().describe("Optional percentage mix of the work: general, support, dev, legal, sales, delivery (should sum to ~100)."),
+});
+
 // --- helpers ---------------------------------------------------------------
 
 function clampItems<T>(items: T[] | undefined, limit: number | undefined): T[] {
@@ -132,6 +144,22 @@ export function createTools(): ToolDef[] {
         "What Altronis offers: the six service pillars (agentic AI, AI governance, private LLM deployment, knowledge management, AI strategy, AI rescue), engagement model, pricing shape, and contact details. Static positioning info — no live call. Use to explain who Altronis is or how to engage them.",
       inputSchema: EmptyInput,
       handler: async () => ALTRONIS_SERVICES,
+    },
+    {
+      name: "altronis_ai_cost_estimate",
+      description:
+        "Estimate the real monthly + multi-year cost of AI for a business, and whether to use the cloud, own a private on-prem box, or run the recommended hybrid (box + a lean cloud sub). Use WHENEVER someone asks what AI would cost, whether to buy their own hardware/server/GPU, 'own vs rent', 'is a private box worth it', how much per month/year, or 'what AI setup/hardware should we get'. Give the team as a MIX: power (all-day heavy/agentic), medium (daily bounded), light (occasional) — or pass an industry `preset` (see altronis_ai_cost_presets). Returns cloud cost (with a budget->frontier range), box capex + running cost, the hybrid monthly, the breakeven month, and a plain-English recommendation — all in SGD, on live model prices. Directional planning estimate, not a quote. Same engine as the calculator at altronis.sg/tools/tco.",
+      inputSchema: TcoEstimateInput,
+      handler: async (input: z.infer<typeof TcoEstimateInput>) => {
+        return await postJson("/api/tco/estimate", input, 30_000);
+      },
+    },
+    {
+      name: "altronis_ai_cost_presets",
+      description:
+        "List the ~50 industry / company-type presets the Altronis AI cost calculator ships (id, name, sector, and default user mix). Call this when someone names an industry or company type but not a precise user breakdown, then pass the closest id to altronis_ai_cost_estimate as `preset`.",
+      inputSchema: EmptyInput,
+      handler: async () => await getJson("/api/tco/presets"),
     },
   ];
 }
