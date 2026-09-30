@@ -1,11 +1,11 @@
 # @altronis/altronis-mcp
 
-MCP server **and** CLI for [Altronis](https://altronis.sg) — Singapore AI consulting. It gives an AI agent (or you, from a shell) a set of read-only tools over the public altronis.sg endpoints: ask the Lyra consultant, estimate what AI would cost a team (cloud vs owning the hardware vs hybrid, in SGD), and pull curated Singapore AI events, news, and business-formation data.
+MCP server **and** CLI for [Altronis](https://altronis.sg), the Singapore AI consultancy. It gives an AI agent (or you, from a shell) a set of read-only tools over the public altronis.sg endpoints: ask the Lyra consultant, estimate what AI would cost a team (cloud vs owning the hardware vs hybrid, in SGD), and pull Singapore AI events, news, and business-formation data.
 
 One codebase, two entry points:
 
-- `altronis-mcp` — a stdio MCP server for Claude Desktop, Claude Code, Cursor, and any MCP client.
-- `altronis` — the same tools as a command-line tool.
+- `altronis-mcp`: a stdio MCP server for Claude Desktop, Claude Code, Cursor, and any MCP client.
+- `altronis`: the same tools as a command-line tool.
 
 Read-only by design: no tool mutates anything or captures leads.
 
@@ -62,8 +62,8 @@ Output is JSON on stdout; logs go to stderr.
 | Tool | What it does |
 |------|--------------|
 | `altronis_ask` | Ask Agent Lyra, the Altronis consultant, an AI/strategy/governance/grants question. |
-| `altronis_sg_ai_events` | Upcoming AI events in Singapore (curated). |
-| `altronis_sg_ai_news` | Latest curated Singapore-relevant AI news. |
+| `altronis_sg_ai_events` | Upcoming AI events in Singapore, refreshed daily. |
+| `altronis_sg_ai_news` | Latest Singapore-relevant AI news. |
 | `altronis_sg_ecosystem` | Singapore business-formation + industry-mix snapshot (SingStat). |
 | `altronis_services` | Altronis's six service pillars, engagement model, grants, and contact. |
 | `altronis_ai_cost_estimate` | What AI would cost a team: cloud-only vs owning a private box vs hybrid, breakeven month, SGD. Same engine as altronis.sg/tools/tco. |
