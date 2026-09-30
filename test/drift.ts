@@ -4,7 +4,7 @@
  * facts (src/facts.ts) and the site's own description of the MCP (/mcp) have
  * not gone stale after a site change.
  *
- * Run after every altronis.sg deploy (~/bin/altronis-mcp-impact.sh does it).
+ * Run after every altronis.sg deploy (the deploy script runs it with smoke).
  * Exit 0 = no impact, nothing to do. Exit 1 = the site moved: patch facts.ts or
  * tools.ts, cut a release, publish.
  *

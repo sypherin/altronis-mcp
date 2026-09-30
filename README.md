@@ -83,6 +83,7 @@ npm install
 npm run build     # tsc -> dist/
 npm test          # unit tests (mocked fetch)
 npm run smoke     # live integration test against altronis.sg
+npm run drift     # static facts + /mcp tool list still match the live site
 npm run dev       # run the MCP server from source (tsx)
 npm run cli -- ask "..."   # run the CLI from source
 ```
