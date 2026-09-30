@@ -1,18 +1,18 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.sypherin/altronis-mcp",
-  "description": "Ask the Altronis AI advisor: grant-matched AI plans, SG AI events, news, ecosystem data. Read-only.",
+  "description": "Ask the Altronis AI consultant, estimate AI cost (cloud vs own box), SG AI events, news. Read-only.",
   "repository": {
     "url": "https://github.com/sypherin/altronis-mcp",
     "source": "github"
   },
   "websiteUrl": "https://altronis.sg",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@altronis/altronis-mcp",
-      "version": "0.1.1",
+      "version": "0.2.0",
       "transport": {
         "type": "stdio"
       },

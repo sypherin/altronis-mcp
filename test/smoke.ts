@@ -21,11 +21,8 @@ const CHECKS: Check[] = [
   { tool: "altronis_sg_ai_news", args: { limit: 3 }, ok: (r) => typeof r?.count === "number" && Array.isArray(r?.news) },
   { tool: "altronis_sg_ecosystem", args: {}, ok: (r) => r?.overview != null },
   { tool: "altronis_ask", args: { question: "In one line, what does Altronis do?" }, ok: (r) => typeof r?.answer === "string" && r.answer.length > 0 },
-  {
-    tool: "altronis_transformation_plan",
-    args: { sector: "manufacturing", business: "A 40-person precision metal stamping SME in Singapore. Manual QC reports and quoting are the biggest pain. Uses Excel and WhatsApp." },
-    ok: (r) => r?.plan != null,
-  },
+  { tool: "altronis_ai_cost_presets", args: {}, ok: (r) => JSON.stringify(r).includes("law-firm") },
+  { tool: "altronis_ai_cost_estimate", args: { preset: "law-firm" }, ok: (r) => typeof r?.cloud_only?.basis_monthly_sgd === "number" && r?.own_the_box != null },
 ];
 
 async function main(): Promise<void> {

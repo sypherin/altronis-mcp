@@ -1,8 +1,8 @@
 {
   "name": "@altronis/altronis-mcp",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "mcpName": "io.github.sypherin/altronis-mcp",
-  "description": "MCP server + CLI for Altronis — Singapore AI consulting. Ask the Lyra consultant, generate a grant-matched AI transformation plan, and pull curated SG AI events, news, and business-formation data. Wraps the public altronis.sg endpoints; read-only.",
+  "description": "MCP server + CLI for Altronis — private, on-prem AI in Singapore. Ask the Lyra consultant, estimate AI cost (cloud vs own box vs hybrid, SGD), and pull curated SG AI events, news, and business-formation data. Wraps the public altronis.sg endpoints; read-only.",
   "type": "module",
   "bin": {
     "altronis-mcp": "dist/mcp-server.js",
@@ -25,8 +25,9 @@
     "singapore",
     "ai-consulting",
     "private-llm",
-    "ai-grants",
-    "cli"
+    "cli",
+    "ai-cost",
+    "on-prem-ai"
   ],
   "author": "Altronis (altronis.sg)",
   "license": "MIT",

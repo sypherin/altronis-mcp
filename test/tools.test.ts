@@ -81,22 +81,21 @@ test("client: timeout (AbortError) throws a timeout message", async () => {
 
 // --- altronis_ask ----------------------------------------------------------
 
-test("ask: POSTs /api/chat with the question + returns reply/advisor", async () => {
-  const calls = mockFetch({ json: { reply: "we deploy private LLMs", advisorLink: "manufacturing" } });
+test("ask: POSTs /api/chat with the question + returns reply", async () => {
+  const calls = mockFetch({ json: { reply: "we deploy private LLMs" } });
   const res: any = await tool("altronis_ask").handler({ question: "private llm?" });
   assert.equal(calls[0].url, "https://test.altronis.sg/api/chat");
   assert.equal(calls[0].method, "POST");
   assert.deepEqual(calls[0].body.messages, [{ role: "user", content: "private llm?" }]);
   assert.ok(calls[0].body.sessionId, "sends a sessionId");
   assert.equal(res.answer, "we deploy private LLMs");
-  assert.equal(res.specialist_sector, "manufacturing");
+  assert.equal(res.source, "altronis.sg/api/chat");
 });
 
-test("ask: missing reply -> empty answer, advisorLink null -> undefined", async () => {
-  mockFetch({ json: { advisorLink: null } });
+test("ask: missing reply -> empty answer", async () => {
+  mockFetch({ json: {} });
   const res: any = await tool("altronis_ask").handler({ question: "hello there" });
   assert.equal(res.answer, "");
-  assert.equal(res.specialist_sector, undefined);
 });
 
 test("ask: schema rejects too-short question", () => {
@@ -104,26 +103,30 @@ test("ask: schema rejects too-short question", () => {
   assert.throws(() => tool("altronis_ask").inputSchema.parse({}));
 });
 
-// --- altronis_transformation_plan ------------------------------------------
+// --- cost tools ------------------------------------------------------------
 
-test("plan: POSTs /api/advisor/<sector>/plan-quick + returns plan", async () => {
-  const calls = mockFetch({ json: { quick: { summary: "do X" }, emailToken: "secret" } });
-  const res: any = await tool("altronis_transformation_plan").handler({
-    sector: "manufacturing",
-    business: "40-person precision stamping SME, manual QC, excel + whatsapp",
-  });
-  assert.equal(calls[0].url, "https://test.altronis.sg/api/advisor/manufacturing/plan-quick");
+test("cost_estimate: POSTs the inputs to /api/tco/estimate", async () => {
+  const calls = mockFetch({ json: { cloud_only: { basis_monthly_sgd: 2579 } } });
+  const res: any = await tool("altronis_ai_cost_estimate").handler({ preset: "law-firm", horizon: 24 });
+  assert.equal(calls[0].url, "https://test.altronis.sg/api/tco/estimate");
   assert.equal(calls[0].method, "POST");
-  assert.deepEqual(res.plan, { summary: "do X" });
-  assert.equal(res.sector, "manufacturing");
-  assert.equal(JSON.stringify(res).includes("secret"), false, "does not leak emailToken");
+  assert.deepEqual(calls[0].body, { preset: "law-firm", horizon: 24 });
+  assert.equal(res.cloud_only.basis_monthly_sgd, 2579);
 });
 
-test("plan: schema rejects unknown sector + too-short business", () => {
-  const s = tool("altronis_transformation_plan").inputSchema;
-  assert.throws(() => s.parse({ sector: "retail", business: "a long enough description here" }));
-  assert.throws(() => s.parse({ sector: "fnb", business: "too short" }));
-  assert.doesNotThrow(() => s.parse({ sector: "sport", business: "a gym chain with 3 outlets and manual scheduling" }));
+test("cost_estimate: schema rejects negative users + bad mode", () => {
+  const s = tool("altronis_ai_cost_estimate").inputSchema;
+  assert.throws(() => s.parse({ power: -1 }));
+  assert.throws(() => s.parse({ mode: "lease" }));
+  assert.doesNotThrow(() => s.parse({ power: 2, medium: 5, light: 10, mode: "seat" }));
+});
+
+test("cost_presets: GETs /api/tco/presets", async () => {
+  const calls = mockFetch({ json: { presets: [{ id: "law-firm" }] } });
+  const res: any = await tool("altronis_ai_cost_presets").handler({});
+  assert.equal(calls[0].url, "https://test.altronis.sg/api/tco/presets");
+  assert.equal(calls[0].method, "GET");
+  assert.equal(res.presets[0].id, "law-firm");
 });
 
 // --- events / news ---------------------------------------------------------
@@ -174,14 +177,20 @@ test("services: static, makes NO network call", async () => {
   assert.equal(called, false);
   assert.equal(res.company, "Altronis");
   assert.equal(res.services.length, 6);
+  const names = res.services.map((x: any) => x.name);
+  assert.ok(names.includes("AI Infrastructure & Deployment"));
+  assert.ok(!names.some((n: string) => /strategy/i.test(n)), "Strategy pillar was retired");
+  assert.match(res.engagement.grants, /\bEDGE\b/, "EDGE replaced PSG/EDG on 30 Sep 2026");
+  assert.doesNotMatch(res.engagement.grants, /may apply: PSG/, "PSG/EDG are no longer on offer");
+  assert.equal("phone" in res.contact, false, "site no longer publishes a phone number");
 });
 
 // --- registry sanity -------------------------------------------------------
 
-test("registry: 6 tools, unique names, all altronis_-prefixed, no lead/mutation tool", () => {
+test("registry: 7 tools, unique names, all altronis_-prefixed, no lead/mutation tool", () => {
   const names = [...tools.keys()];
-  assert.equal(names.length, 6);
-  assert.equal(new Set(names).size, 6);
+  assert.equal(names.length, 7);
+  assert.equal(new Set(names).size, 7);
   assert.ok(names.every((n) => n.startsWith("altronis_")));
   assert.ok(!names.some((n) => /lead|capture|contact|submit|create|update|delete/i.test(n)));
 });

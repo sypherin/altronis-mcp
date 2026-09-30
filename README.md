@@ -1,6 +1,6 @@
 # @altronis/altronis-mcp
 
-MCP server **and** CLI for [Altronis](https://altronis.sg) — Singapore AI consulting. It gives an AI agent (or you, from a shell) a set of read-only tools over the public altronis.sg endpoints: ask the Lyra consultant, generate a grant-matched AI transformation plan, and pull curated Singapore AI events, news, and business-formation data.
+MCP server **and** CLI for [Altronis](https://altronis.sg) — Singapore AI consulting. It gives an AI agent (or you, from a shell) a set of read-only tools over the public altronis.sg endpoints: ask the Lyra consultant, estimate what AI would cost a team (cloud vs owning the hardware vs hybrid, in SGD), and pull curated Singapore AI events, news, and business-formation data.
 
 One codebase, two entry points:
 
@@ -38,13 +38,15 @@ For Claude Code:
 claude mcp add altronis -- npx -y @altronis/altronis-mcp
 ```
 
-Then ask your agent things like *"use altronis to draft an AI plan for a Singapore precision-manufacturing SME"* or *"what AI events are on in Singapore this month?"*.
+Then ask your agent things like *"use altronis to estimate what AI would cost a 35-person law firm, cloud vs its own server"* or *"what AI events are on in Singapore this month?"*.
 
 ## Use as a CLI
 
 ```bash
 altronis ask "does an on-prem LLM satisfy PDPA?"
-altronis plan --sector manufacturing "40-person precision stamping SME, manual QC reports, uses Excel + WhatsApp"
+altronis cost --preset law-firm
+altronis cost '{"power":5,"medium":20,"light":15,"horizon":36}'
+altronis presets
 altronis events 5
 altronis news 5
 altronis ecosystem
@@ -60,11 +62,12 @@ Output is JSON on stdout; logs go to stderr.
 | Tool | What it does |
 |------|--------------|
 | `altronis_ask` | Ask Agent Lyra, the Altronis consultant, an AI/strategy/governance/grants question. |
-| `altronis_transformation_plan` | Grant-matched AI transformation plan for a Singapore SME. `sector` = `sport`, `manufacturing`, or `fnb`. |
 | `altronis_sg_ai_events` | Upcoming AI events in Singapore (curated). |
 | `altronis_sg_ai_news` | Latest curated Singapore-relevant AI news. |
 | `altronis_sg_ecosystem` | Singapore business-formation + industry-mix snapshot (SingStat). |
-| `altronis_services` | Altronis's six service pillars, engagement model, and contact. |
+| `altronis_services` | Altronis's six service pillars, engagement model, grants, and contact. |
+| `altronis_ai_cost_estimate` | What AI would cost a team: cloud-only vs owning a private box vs hybrid, breakeven month, SGD. Same engine as altronis.sg/tools/tco. |
+| `altronis_ai_cost_presets` | ~50 industry presets (default user mix) to feed the cost estimate. |
 
 ## Configuration
 

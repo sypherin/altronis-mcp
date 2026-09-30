@@ -3,7 +3,8 @@
  * CLI for @altronis/altronis-mcp — the same Altronis tools, from your shell.
  *
  *   altronis ask "does on-prem LLM satisfy PDPA?"
- *   altronis plan --sector manufacturing "40-person precision stamping SME, manual QC reports"
+ *   altronis cost --preset law-firm
+ *   altronis presets
  *   altronis events [limit]
  *   altronis news [limit]
  *   altronis ecosystem
@@ -32,7 +33,8 @@ const HELP = `altronis — Singapore AI consulting, from your shell (base: ${bas
 
 Usage:
   altronis ask "<question>"                       Ask the Altronis consultant
-  altronis plan --sector <s> "<business>"         Grant-matched AI plan (s = sport|manufacturing|fnb)
+  altronis cost [--preset <id>] [json_args]       AI cost: cloud vs own box vs hybrid (SGD)
+  altronis presets                                Industry presets for the cost estimate
   altronis events [limit]                         Upcoming SG AI events
   altronis news [limit]                           Latest SG AI news
   altronis ecosystem                              SG business-formation snapshot
@@ -43,7 +45,7 @@ Usage:
 Config: ALTRONIS_BASE_URL (default https://altronis.sg), ALTRONIS_TIMEOUT_MS (default 30000)
 `;
 
-/** Pull `--sector <value>` (or `--sector=value`) out of args, returning the
+/** Pull `--flag <value>` (or `--flag=value`) out of args, returning the
  * value and the remaining args. */
 function extractFlag(args: string[], flag: string): { value?: string; rest: string[] } {
   const rest: string[] = [];
@@ -107,13 +109,22 @@ async function main(): Promise<void> {
       return callTool(tools, "altronis_ask", { question });
     }
 
-    case "plan": {
-      const { value: sector, rest } = extractFlag(argv.slice(1), "--sector");
-      if (!sector) die("provide --sector <sport|manufacturing|fnb>");
-      const business = rest.join(" ").trim();
-      if (!business) die('provide a business description, e.g. altronis plan --sector fnb "small cafe chain..."');
-      return callTool(tools, "altronis_transformation_plan", { sector, business });
+    case "cost": {
+      const { value: preset, rest } = extractFlag(argv.slice(1), "--preset");
+      let jsonArgs: Record<string, unknown> = {};
+      if (rest[0]) {
+        try {
+          jsonArgs = JSON.parse(rest[0]);
+        } catch {
+          die(`could not parse JSON args: ${rest[0]}`);
+        }
+      }
+      if (preset) jsonArgs.preset = preset;
+      return callTool(tools, "altronis_ai_cost_estimate", jsonArgs);
     }
+
+    case "presets":
+      return callTool(tools, "altronis_ai_cost_presets", {});
 
     case "events":
     case "news": {
