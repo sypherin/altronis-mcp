@@ -39,7 +39,7 @@ export const ALTRONIS_SERVICES = {
     },
   ],
   engagement: {
-    pricing: "Outcome-based, not hourly. Advisory retainers from SGD 1,000/month; projects quoted after a free 30-minute consultation.",
+    pricing: "There is no public price list. Every engagement starts with a free 30-minute discovery call; Altronis quotes after that, once it understands the job.",
     typical_timeline: "2-3 weeks to a working proof of concept, 8-10 weeks to production use.",
     grants: "Singapore's EDGE Grant takes applications from 30 September 2026 (EDG, MRA and PSG ceased on 29 September 2026). Eligibility and coverage are set by EnterpriseSG, never guaranteed; details and sources at https://altronis.sg/funding",
     next_step: "Free 30-minute consultation: no slides, no obligation.",

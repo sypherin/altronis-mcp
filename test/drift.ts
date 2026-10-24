@@ -51,8 +51,12 @@ async function main(): Promise<void> {
   for (const span of facts.engagement.typical_timeline.match(/\d+-\d+ weeks/g) ?? []) {
     check(`timeline "${span}"`, llms.includes(span), `in llms.txt=${llms.includes(span)}`);
   }
-  const price = facts.engagement.pricing.match(/SGD [\d,]+\/month/)?.[0] ?? "(none in facts)";
-  check(`pricing "${price}"`, llms.includes(price), `in llms.txt=${llms.includes(price)}`);
+  // Any price we serve must be one the site states; "no public price list" must be what the site says too.
+  const price = facts.engagement.pricing.match(/SGD [\d,]+(?:\/month)?/)?.[0];
+  if (price) check(`pricing "${price}"`, llms.includes(price), `in llms.txt=${llms.includes(price)}`);
+  const noList = facts.engagement.pricing.includes("no public price list");
+  check("pricing: no public price list", !price && noList === llms.includes("no public price list"),
+    `facts price=${price ?? "none"} facts says no list=${noList} llms.txt says no list=${llms.includes("no public price list")}`);
   const grant = /\bEDGE\b/.test(facts.engagement.grants);
   check("grant scheme EDGE", grant && /\bEDGE\b/.test(llms), `facts=${grant} llms.txt=${/\bEDGE\b/.test(llms)}`);
 
