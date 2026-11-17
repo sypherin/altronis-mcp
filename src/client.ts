@@ -5,7 +5,7 @@
  * URL, timeouts, headers, and error shape. Configurable via env so the package
  * is testable and self-hostable:
  *   ALTRONIS_BASE_URL   default https://altronis.sg (trailing slash stripped)
- *   ALTRONIS_TIMEOUT_MS default 30000
+ *   ALTRONIS_TIMEOUT_MS default 30000 (altronis_ask waits 90000, see tools.ts)
  */
 
 import { VERSION } from "./version.js";
@@ -19,9 +19,14 @@ export function baseUrl(): string {
   return b.replace(/\/+$/, "");
 }
 
-function timeoutMs(): number {
+/** ALTRONIS_TIMEOUT_MS when it is set to a positive number, else null. */
+export function envTimeoutMs(): number | null {
   const raw = Number(process.env["ALTRONIS_TIMEOUT_MS"]);
-  return Number.isFinite(raw) && raw > 0 ? raw : DEFAULT_TIMEOUT_MS;
+  return Number.isFinite(raw) && raw > 0 ? raw : null;
+}
+
+function timeoutMs(): number {
+  return envTimeoutMs() ?? DEFAULT_TIMEOUT_MS;
 }
 
 /** A stable-ish per-process session id so multi-call flows group together. */

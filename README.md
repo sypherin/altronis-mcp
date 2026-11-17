@@ -74,7 +74,7 @@ Output is JSON on stdout; logs go to stderr.
 | Env var | Default | Purpose |
 |---------|---------|---------|
 | `ALTRONIS_BASE_URL` | `https://altronis.sg` | Point at a different origin (e.g. staging or self-hosted). |
-| `ALTRONIS_TIMEOUT_MS` | `30000` | Per-request timeout. |
+| `ALTRONIS_TIMEOUT_MS` | `30000` (`altronis_ask`: `90000`) | Per-request timeout in ms. When set, it applies to every tool, `altronis_ask` included. |
 
 ## Develop
 

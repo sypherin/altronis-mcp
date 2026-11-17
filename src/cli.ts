@@ -42,7 +42,7 @@ Usage:
   altronis tool <tool_name> [json_args]           Call any tool by name
   altronis list                                   List all tools
 
-Config: ALTRONIS_BASE_URL (default https://altronis.sg), ALTRONIS_TIMEOUT_MS (default 30000)
+Config: ALTRONIS_BASE_URL (default https://altronis.sg), ALTRONIS_TIMEOUT_MS (default 30000; ask waits 90000)
 `;
 
 /** Pull `--flag <value>` (or `--flag=value`) out of args, returning the

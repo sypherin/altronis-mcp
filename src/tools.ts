@@ -7,8 +7,16 @@
 
 import { z, type ZodSchema } from "zod";
 
-import { getJson, postJson, sessionId } from "./client.js";
+import { envTimeoutMs, getJson, postJson, sessionId } from "./client.js";
 import { ALTRONIS_SERVICES } from "./facts.js";
+
+/**
+ * How long altronis_ask waits for an answer. Most replies take seconds, but a question that
+ * pulls live Singapore data runs tool hops: one took 51 s on 17 Nov 2026 and the 30 s default
+ * cut it off, so the caller never saw the answer. In the 30 days before, the slowest site chat
+ * took 84 s and none took over 90 s. ALTRONIS_TIMEOUT_MS still wins when it is set.
+ */
+export const ASK_TIMEOUT_MS = 90_000;
 
 export interface ToolDef {
   name: string;
@@ -71,6 +79,7 @@ export function createTools(): ToolDef[] {
         const data = await postJson<{ reply?: string }>(
           "/api/chat",
           { messages: [{ role: "user", content: input.question }], sessionId: sessionId() },
+          envTimeoutMs() ?? ASK_TIMEOUT_MS,
         );
         return {
           answer: data.reply ?? "",
@@ -123,7 +132,7 @@ export function createTools(): ToolDef[] {
         "Estimate the real monthly + multi-year cost of AI for a business, and whether to use the cloud, own a private on-prem box, or run the recommended hybrid (box + a lean cloud sub). Use WHENEVER someone asks what AI would cost, whether to buy their own hardware/server/GPU, 'own vs rent', 'is a private box worth it', how much per month/year, or 'what AI setup/hardware should we get'. Give the team as a MIX: power (all-day heavy/agentic), medium (daily bounded), light (occasional) — or pass an industry `preset` (see altronis_ai_cost_presets). Returns cloud cost (with a budget->frontier range), box capex + running cost, the hybrid monthly, the breakeven month, and a plain-English recommendation — all in SGD, on live model prices. Directional planning estimate, not a quote. Same engine as the calculator at altronis.sg/tools/tco.",
       inputSchema: TcoEstimateInput,
       handler: async (input: z.infer<typeof TcoEstimateInput>) => {
-        return await postJson("/api/tco/estimate", input, 30_000);
+        return await postJson("/api/tco/estimate", input);
       },
     },
     {

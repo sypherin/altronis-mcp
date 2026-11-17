@@ -7,12 +7,12 @@
     "source": "github"
   },
   "websiteUrl": "https://altronis.sg",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@altronis/altronis-mcp",
-      "version": "0.2.1",
+      "version": "0.2.2",
       "transport": {
         "type": "stdio"
       },
@@ -25,7 +25,7 @@
           "name": "ALTRONIS_BASE_URL"
         },
         {
-          "description": "HTTP timeout in milliseconds (default: 30000)",
+          "description": "HTTP timeout in milliseconds (default: 30000; altronis_ask waits 90000 unless this is set)",
           "isRequired": false,
           "format": "number",
           "isSecret": false,

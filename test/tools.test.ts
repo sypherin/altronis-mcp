@@ -13,6 +13,7 @@ import { createTools } from "../src/tools.js";
 import { getJson, baseUrl } from "../src/client.js";
 
 const realFetch = globalThis.fetch;
+const realSetTimeout = globalThis.setTimeout;
 const tools = new Map(createTools().map((t) => [t.name, t]));
 function tool(name: string) {
   const t = tools.get(name);
@@ -52,7 +53,9 @@ beforeEach(() => {
 });
 afterEach(() => {
   globalThis.fetch = realFetch;
+  globalThis.setTimeout = realSetTimeout;
   delete process.env.ALTRONIS_BASE_URL;
+  delete process.env.ALTRONIS_TIMEOUT_MS;
 });
 
 // --- client ----------------------------------------------------------------
@@ -90,6 +93,42 @@ test("ask: POSTs /api/chat with the question + returns reply", async () => {
   assert.ok(calls[0].body.sessionId, "sends a sessionId");
   assert.equal(res.answer, "we deploy private LLMs");
   assert.equal(res.source, "altronis.sg/api/chat");
+});
+
+// The client arms one setTimeout per request with its abort deadline; recording the
+// delays proves which deadline a tool really used (the request itself is mocked).
+function recordTimeouts(): number[] {
+  const seen: number[] = [];
+  globalThis.setTimeout = ((fn: (...a: unknown[]) => void, ms?: number, ...rest: unknown[]) => {
+    seen.push(Number(ms));
+    return realSetTimeout(fn, ms, ...rest);
+  }) as typeof setTimeout;
+  return seen;
+}
+
+test("ask: waits 90 s by default (live SG data answers took 51 s on 17 Nov 2026)", async () => {
+  mockFetch({ json: { reply: "ok" } });
+  const seen = recordTimeouts();
+  await tool("altronis_ask").handler({ question: "private llm?" });
+  assert.deepEqual(seen, [90_000]);
+});
+
+test("ask: ALTRONIS_TIMEOUT_MS still sets the deadline when given", async () => {
+  process.env.ALTRONIS_TIMEOUT_MS = "120000";
+  mockFetch({ json: { reply: "ok" } });
+  const seen = recordTimeouts();
+  await tool("altronis_ask").handler({ question: "private llm?" });
+  assert.deepEqual(seen, [120_000]);
+});
+
+test("reads keep the 30 s default, and the env var reaches the cost estimate too", async () => {
+  mockFetch({ json: { items: [] } });
+  const seen = recordTimeouts();
+  await tool("altronis_sg_ai_events").handler({});
+  assert.deepEqual(seen, [30_000]);
+  process.env.ALTRONIS_TIMEOUT_MS = "45000";
+  await tool("altronis_ai_cost_estimate").handler({ preset: "law-firm" });
+  assert.deepEqual(seen, [30_000, 45_000]);
 });
 
 test("ask: missing reply -> empty answer", async () => {
