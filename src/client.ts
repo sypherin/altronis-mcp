@@ -19,10 +19,13 @@ export function baseUrl(): string {
   return b.replace(/\/+$/, "");
 }
 
-/** ALTRONIS_TIMEOUT_MS when it is set to a positive number, else null. */
+/** setTimeout's largest delay; anything above it fires after 1 ms, which would abort every call. */
+const MAX_TIMEOUT_MS = 2_147_483_647;
+
+/** ALTRONIS_TIMEOUT_MS when it is set to a positive number (capped at MAX_TIMEOUT_MS), else null. */
 export function envTimeoutMs(): number | null {
   const raw = Number(process.env["ALTRONIS_TIMEOUT_MS"]);
-  return Number.isFinite(raw) && raw > 0 ? raw : null;
+  return Number.isFinite(raw) && raw > 0 ? Math.min(raw, MAX_TIMEOUT_MS) : null;
 }
 
 function timeoutMs(): number {

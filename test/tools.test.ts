@@ -131,6 +131,15 @@ test("reads keep the 30 s default, and the env var reaches the cost estimate too
   assert.deepEqual(seen, [30_000, 45_000]);
 });
 
+test("ALTRONIS_TIMEOUT_MS above setTimeout's max is capped, not turned into an instant abort", async () => {
+  // setTimeout treats any delay over 2^31-1 ms as 1 ms, so a huge value would fail every call at once.
+  process.env.ALTRONIS_TIMEOUT_MS = "99999999999";
+  mockFetch({ json: { reply: "ok" } });
+  const seen = recordTimeouts();
+  await tool("altronis_ask").handler({ question: "private llm?" });
+  assert.deepEqual(seen, [2_147_483_647]);
+});
+
 test("ask: missing reply -> empty answer", async () => {
   mockFetch({ json: {} });
   const res: any = await tool("altronis_ask").handler({ question: "hello there" });
