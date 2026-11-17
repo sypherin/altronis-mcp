@@ -77,7 +77,7 @@ export async function request<T = unknown>(
     if (e.name === "AbortError") {
       throw new Error(`Altronis request timed out after ${ms}ms: ${method} ${url}`);
     }
-    throw new Error(`Altronis request failed: ${method} ${url} — ${e.message}`);
+    throw new Error(`Altronis request failed: ${method} ${url}: ${e.message}`);
   } finally {
     clearTimeout(timer);
   }
@@ -85,7 +85,7 @@ export async function request<T = unknown>(
   if (!res.ok) {
     const snippet = (await res.text().catch(() => "")).slice(0, 200);
     throw new Error(
-      `Altronis API returned HTTP ${res.status} for ${method} ${url}${snippet ? ` — ${snippet}` : ""}`,
+      `Altronis API returned HTTP ${res.status} for ${method} ${url}${snippet ? `: ${snippet}` : ""}`,
     );
   }
 

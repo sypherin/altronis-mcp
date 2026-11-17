@@ -2,12 +2,12 @@
 /**
  * stdio MCP server for @altronis/altronis-mcp.
  *
- * Published as the `altronis-mcp` binary — `npx @altronis/altronis-mcp` boots
+ * Published as the `altronis-mcp` binary; `npx @altronis/altronis-mcp` boots
  * this. Speaks JSON-RPC over stdio (Model Context Protocol) and exposes the
  * read-only Altronis tools to any MCP client (Claude Desktop, Claude Code,
  * Cursor, etc.).
  *
- * stdout is reserved for MCP traffic — ALL logs go to stderr.
+ * stdout is reserved for MCP traffic: ALL logs go to stderr.
  */
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";

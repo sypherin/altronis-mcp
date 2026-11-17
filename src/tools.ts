@@ -1,6 +1,6 @@
 /**
  * The Altronis MCP tool set. Each tool wraps a public altronis.sg endpoint (or
- * static facts) and is read-only — nothing here mutates state or captures leads.
+ * static facts) and is read-only: nothing here mutates state or captures leads.
  * Descriptions are written for the calling LLM: they say WHEN to reach for the
  * tool, that the scope is Singapore + Altronis, and what comes back.
  */
@@ -90,7 +90,7 @@ export function createTools(): ToolDef[] {
     {
       name: "altronis_sg_ai_events",
       description:
-        "List upcoming AI events, meetups, and conferences in Singapore, curated by Altronis. Returns event title, date (SGT), venue, city, and a link. Use when someone asks what AI events are happening in Singapore.",
+        "List upcoming AI events, meetups, and conferences in Singapore, collected by Altronis. Returns event title, date (SGT), venue, city, and a link. Use when someone asks what AI events are happening in Singapore.",
       inputSchema: ListInput,
       handler: async (input: z.infer<typeof ListInput>) => {
         const data = await getJson<{ items?: unknown[] }>("/api/events");
@@ -101,7 +101,7 @@ export function createTools(): ToolDef[] {
     {
       name: "altronis_sg_ai_news",
       description:
-        "Latest curated Singapore-relevant AI news headlines, aggregated by Altronis. Returns headline, source URL, and id. Use when someone asks for recent AI news in or affecting Singapore.",
+        "Latest Singapore-relevant AI news headlines, aggregated by Altronis. Returns headline, source URL, and id. Use when someone asks for recent AI news in or affecting Singapore.",
       inputSchema: ListInput,
       handler: async (input: z.infer<typeof ListInput>) => {
         const data = await getJson<{ items?: unknown[] }>("/api/news");
@@ -122,14 +122,14 @@ export function createTools(): ToolDef[] {
     {
       name: "altronis_services",
       description:
-        "What Altronis offers: the six service pillars (agentic AI design & deployment, AI governance/risk/compliance, AI infrastructure & deployment incl. model optimization and training, AI product ownership, enterprise knowledge AI, AI rescue & remediation), engagement model, pricing shape, grants, and contact details. Static positioning info — no live call. Use to explain who Altronis is or how to engage them.",
+        "What Altronis offers: the six service pillars (agentic AI design & deployment, AI governance/risk/compliance, AI infrastructure & deployment incl. model optimization and training, AI product ownership, enterprise knowledge AI, AI rescue & remediation), engagement model, pricing shape, grants, and contact details. Static positioning info, no live call. Use to explain who Altronis is or how to engage them.",
       inputSchema: EmptyInput,
       handler: async () => ALTRONIS_SERVICES,
     },
     {
       name: "altronis_ai_cost_estimate",
       description:
-        "Estimate the real monthly + multi-year cost of AI for a business, and whether to use the cloud, own a private on-prem box, or run the recommended hybrid (box + a lean cloud sub). Use WHENEVER someone asks what AI would cost, whether to buy their own hardware/server/GPU, 'own vs rent', 'is a private box worth it', how much per month/year, or 'what AI setup/hardware should we get'. Give the team as a MIX: power (all-day heavy/agentic), medium (daily bounded), light (occasional) — or pass an industry `preset` (see altronis_ai_cost_presets). Returns cloud cost (with a budget->frontier range), box capex + running cost, the hybrid monthly, the breakeven month, and a plain-English recommendation — all in SGD, on live model prices. Directional planning estimate, not a quote. Same engine as the calculator at altronis.sg/tools/tco.",
+        "Estimate the real monthly + multi-year cost of AI for a business, and whether to use the cloud, own a private on-prem box, or run the recommended hybrid (box + a lean cloud sub). Use WHENEVER someone asks what AI would cost, whether to buy their own hardware/server/GPU, 'own vs rent', 'is a private box worth it', how much per month/year, or 'what AI setup/hardware should we get'. Give the team as a MIX: power (all-day heavy/agentic), medium (daily bounded), light (occasional), or pass an industry `preset` (see altronis_ai_cost_presets). Returns cloud cost (with a budget->frontier range), box capex + running cost, the hybrid monthly, the breakeven month, and a plain-English recommendation, all in SGD, on live model prices. Directional planning estimate, not a quote. Same engine as the calculator at altronis.sg/tools/tco.",
       inputSchema: TcoEstimateInput,
       handler: async (input: z.infer<typeof TcoEstimateInput>) => {
         return await postJson("/api/tco/estimate", input);

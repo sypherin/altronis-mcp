@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * CLI for @altronis/altronis-mcp — the same Altronis tools, from your shell.
+ * CLI for @altronis/altronis-mcp: the same Altronis tools, from your shell.
  *
  *   altronis ask "does on-prem LLM satisfy PDPA?"
  *   altronis cost --preset law-firm
@@ -29,7 +29,7 @@ function die(msg: string): never {
   process.exit(1);
 }
 
-const HELP = `altronis — Singapore AI consulting, from your shell (base: ${baseUrl()})
+const HELP = `altronis: Singapore AI consulting, from your shell (base: ${baseUrl()})
 
 Usage:
   altronis ask "<question>"                       Ask the Altronis consultant

@@ -1,5 +1,5 @@
 /**
- * Single source of truth for the package version — read from package.json at
+ * Single source of truth for the package version, read from package.json at
  * runtime so server/CLI/User-Agent can never drift from the published version.
  */
 
